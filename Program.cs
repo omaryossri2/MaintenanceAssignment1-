@@ -18,8 +18,8 @@ public class SchoolContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        // Configure your database connection here
-        optionsBuilder.UseSqlServer("YourConnectionString");
+        //database server not working on my mac.
+        optionsBuilder.UseSqlServer("the-connection-string");
     }
 }
 
@@ -29,7 +29,6 @@ class Program
     {
         using (var context = new SchoolContext())
         {
-            // Create the database (if not exists)
             context.Database.EnsureCreated();
 
             // Add students
@@ -37,6 +36,9 @@ class Program
             AddStudent(context, "Jane Smith", 2022);
             AddStudent(context, "Bob Johnson", 2024);
             AddStudent(context, "Alice Williams", 2021);
+
+            // Update the second row
+            UpdateSecondStudent(context);
 
             // Query and display all students
             DisplayAllStudents(context);
@@ -51,6 +53,17 @@ class Program
         Console.WriteLine($"Added student: ID: {newStudent.ID}, Name: {newStudent.Name}, Year: {newStudent.Year}");
     }
 
+    static void UpdateSecondStudent(SchoolContext context)
+    {
+        var secondStudent = context.Students.Skip(1).FirstOrDefault(); // Skip(1) to get the second student
+        if (secondStudent != null)
+        {
+            secondStudent.Year = 2025; // Update the year to 2025
+            context.SaveChanges();
+            Console.WriteLine($"Updated second student: ID: {secondStudent.ID}, New Year: {secondStudent.Year}");
+        }
+    }
+
     static void DisplayAllStudents(SchoolContext context)
     {
         var students = context.Students.ToList();
@@ -61,3 +74,4 @@ class Program
         }
     }
 }
+
